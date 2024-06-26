@@ -279,221 +279,191 @@ $ar = hexdec(str_split($color, 2));
 
  function propertySetHandle($object, $property, $value) {
 
-$sql="SELECT magichome_commands.* FROM magichome_commands WHERE magichome_commands.LINKED_OBJECT LIKE '" . DBSafe($object) . "' AND magichome_commands.LINKED_PROPERTY LIKE '" . DBSafe($property) . "'";
-//sg('test.sql',$sql);
+	$sql="SELECT magichome_commands.* FROM magichome_commands WHERE magichome_commands.LINKED_OBJECT LIKE '" . DBSafe($object) . "' AND magichome_commands.LINKED_PROPERTY LIKE '" . DBSafe($property) . "'";
+	//sg('test.sql',$sql);
 
-     $properties = SQLSelect($sql);
-     $total = count($properties);
-     if ($total) {
+	$properties = SQLSelect($sql);
+	$total = count($properties);
+	if ($total) {
 
-         for ($i = 0; $i < $total; $i++) {
-$sql="SELECT * FROM magichome_devices WHERE ID=".(int)$properties[$i]['DEVICE_ID'];
-//sg('test.sql2',$sql);
-             $device=SQLSelectOne($sql);
-             $host=$device['IP'];
-
-	     $deviceid=$device['ID'];
-             $type=$device['MODEL']; //0 = white, 1 = rgb
-             $command=$properties[$i]['TITLE'];
-             $meth=$properties[$i]['LINKED_METHOD'];
-             $state=$properties[$i]['VALUE'];             
-             $magichomeObject = new magichome();
-             $properties[$i]['VALUE']=$value;
-             $properties[$i]['UPDATED']=date('Y-m-d H:i:s');
-
-             SQLUpdate('magichome_commands',$properties[$i]);	
-
-//sg('test.mycommand', "command:".$command." value:".$value." type:".$type); 
-//             if ($type=='AK001-ZJ100') {
-//             if ($type=='AK001-ZJ100') {
-//sg('test.substr', substr($type,0,8));
-//sg('test.mg', substr($type,0,8).":". $command.":".$value);
-           if (substr($type,0,8)=='AK001-ZJ') {
-//sg('test.mg', substr($type,0,8).":". $command.":".$value);
-                                   
-/*
-
-                     if ($meth=='turnOn') {
-                         $magichomeObject->turnon($deviceid);
-			 $magichomeObject->getinfo2($deviceid);
-                     }
-
-                     if ($meth=='turnOff') {
-                         $magichomeObject->turnoff($deviceid);
-			 $magichomeObject->getinfo2($deviceid);
-                     }
-
-
-                     if ($meth=='switch') {
-		if ($state==0) { $magichomeObject->turnon($deviceid);} 
-                       else { $magichomeObject->turnoff($deviceid);} 
-			 $magichomeObject->getinfo2($deviceid);
-                     }
-*/
-
-
-
-                     if ($command=='status'&& $value=='1') {
-                         $magichomeObject->turnon($deviceid);
-			 $magichomeObject->getinfo2($deviceid);
-                     }
-                     if ($command=='status'&& $value=='0') {
-                         $magichomeObject->turnoff($deviceid);
-			 $magichomeObject->getinfo2($deviceid);
-                     }
-                       if ($command=='color') {
-                        $colorhex=str_replace('#','',$value);
-//			$ar =(str_split($colorhex, 2));
-//sg('test.newcolor',$colorhex);
-//			$magichomeObject->set_colorhex($deviceid, $ar[0],$ar[1],$ar[2]);
-			$magichomeObject->set_colorrgb($deviceid, $colorhex);
-			$magichomeObject->getinfo2($deviceid, $debug);
-				             }
-
-//sg('test.mh',$command.":".$value.":");
-//sg('test.mh',$command.":".$value.":".$oldcolor);
-                       if ($command=="command" && $value=='changecolor') {
-                       $magichomeObject->turnon($deviceid);
-  		       $this->changecolordevice($deviceid);
-				             }
-
-                       if ($command=="command" && $value!='changecolor') {
-                       $magichomeObject->turnon($deviceid);
-  		       $this->changecolordevice($deviceid);
-                       $this->set_command($deviceid,$value, '01');
-				             }
-
-
-
-
-                 }  //model
-              } //╨а╨О╨▓╨В┬а╨а┬а╨бтАШ╨а┬а╨бтАЭ╨а┬а╨Т┬╗ ╨а┬а╨втАШ╨а┬а╨Т┬╡╨а┬а╨атАа╨а┬а╨Т┬░╨а┬а╨▓тАЮтАУ╨а╨О╨а╤У╨а┬а╨бтАв╨а┬а╨атАа
- }//if total
-
-
-
-}
+		for ($i = 0; $i < $total; $i++) {
+			$sql="SELECT * FROM magichome_devices WHERE ID=".(int)$properties[$i]['DEVICE_ID'];
+			//sg('test.sql2',$sql);
+			$device=SQLSelectOne($sql);
+			$host=$device['IP'];
+			
+			$deviceid=$device['ID'];
+			$type=$device['MODEL']; //0 = white, 1 = rgb
+			$command=$properties[$i]['TITLE'];
+			$meth=$properties[$i]['LINKED_METHOD'];
+			$state=$properties[$i]['VALUE'];             
+			$magichomeObject = new magichome();
+			$properties[$i]['VALUE']=$value;
+			$properties[$i]['UPDATED']=date('Y-m-d H:i:s');
+			
+			SQLUpdate('magichome_commands',$properties[$i]);	
+	
+			//sg('test.mycommand', "command:".$command." value:".$value." type:".$type); 
+			//             if ($type=='AK001-ZJ100') {
+			//             if ($type=='AK001-ZJ100') {
+			//sg('test.substr', substr($type,0,8));
+			//sg('test.mg', substr($type,0,8).":". $command.":".$value);
+			if (substr($type,0,8)=='AK001-ZJ') {
+				//sg('test.mg', substr($type,0,8).":". $command.":".$value);
+										
+/*		
+		
+				if ($meth=='turnOn') {
+					$magichomeObject->turnon($deviceid);
+					$magichomeObject->getinfo2($deviceid);
+				}
+		
+				if ($meth=='turnOff') {
+					$magichomeObject->turnoff($deviceid);
+					$magichomeObject->getinfo2($deviceid);
+				}
+		
+		
+				if ($meth=='switch') {
+					if ($state==0) { $magichomeObject->turnon($deviceid);} 
+					else { $magichomeObject->turnoff($deviceid);} 
+					$magichomeObject->getinfo2($deviceid);
+				}
+*/		
+				if ($command=='status'&& $value=='1') {
+					$magichomeObject->turnon($deviceid);
+					$magichomeObject->getinfo2($deviceid);
+				}
+				if ($command=='status'&& $value=='0') {
+					$magichomeObject->turnoff($deviceid);
+					$magichomeObject->getinfo2($deviceid);
+				}
+				if ($command=='color') {
+					$colorhex=str_replace('#','',$value);
+					//$ar =(str_split($colorhex, 2));
+					//sg('test.newcolor',$colorhex);
+					//$magichomeObject->set_colorhex($deviceid, $ar[0],$ar[1],$ar[2]);
+					$magichomeObject->set_colorrgb($deviceid, $colorhex);
+					$magichomeObject->getinfo2($deviceid, $debug);
+				}
+		
+				//sg('test.mh',$command.":".$value.":");
+				//sg('test.mh',$command.":".$value.":".$oldcolor);
+				if ($command=="command" && $value=='changecolor') {
+					$magichomeObject->turnon($deviceid);
+					$this->changecolordevice($deviceid);
+				}
+		
+				if ($command=="command" && $value!='changecolor') {
+					$magichomeObject->turnon($deviceid);
+					$this->changecolordevice($deviceid);
+					$this->set_command($deviceid,$value, '01');
+				}
+			}  //model
+		}
+	}//if total
+ }
 
 
  function processCycle() {
-//   $every=$this->config['EVERY'];
+	//   $every=$this->config['EVERY'];
+	
+	//$cmd_rec = SQLSelectOne("SELECT VALUE FROM magichome_config where parametr='ENABLE'");
+	//$enable=$cmd_rec['VALUE'];
+	
+	//$enable=1;
+	$cmd_rec = SQLSelectOne("SELECT VALUE FROM magichome_config where parametr='EVERY'");
+	$every=$cmd_rec['VALUE'];
+	
+	
+	$cmd_rec = SQLSelectOne("SELECT VALUE FROM magichome_config where parametr='LASTCYCLE_TS'");
+	$latest=$cmd_rec['VALUE'];
 
-$cmd_rec = SQLSelectOne("SELECT VALUE FROM magichome_config where parametr='ENABLE'");
-$enable=$cmd_rec['VALUE'];
-
-$enable=1;
-$cmd_rec = SQLSelectOne("SELECT VALUE FROM magichome_config where parametr='EVERY'");
-$every=$cmd_rec['VALUE'];
-
-
-$cmd_rec = SQLSelectOne("SELECT VALUE FROM magichome_config where parametr='LASTCYCLE_TS'");
-$latest=$cmd_rec['VALUE'];
-
-   $tdev = time()-$latest;
-   $has = $tdev>$every*60;
-   if ($tdev < 0) {$has = true;}
-   
-   if ($has) {  
-
-$cmd_rec = SQLSelect("SELECT ID FROM magichome_devices");
-foreach ($cmd_rec as $cmd_r)
-{
-$myid=$cmd_r['ID'];
-$this->getinfo2($myid);
-}}
-  } 
+	$tdev = time()-(int)$latest;
+	$has = $tdev>$every*60;
+	if ($tdev < 0) {
+		$has = true;
+		}
+	if ($has) { 
+		$cmd_rec = SQLSelect("SELECT ID FROM magichome_devices");
+		foreach ($cmd_rec as $cmd_r)
+		{
+			$myid=$cmd_r['ID'];
+			$this->getinfo2($myid);
+		}
+	}
+ } 
   
 
 
             
 
    
-function edit_devices(&$out, $id) {
-require(DIR_MODULES.$this->name . '/magichome_devices_edit.inc.php');
-}
+ function edit_devices(&$out, $id) {
+	require(DIR_MODULES.$this->name . '/magichome_devices_edit.inc.php');
+ }
 
 
-function changecolordevice($deviceid){
+ function changecolordevice($deviceid){
 
-   $this->getinfo2($deviceid);
-//  $oldcolor=SQLSelectOne("SELECT *, substr(CURRENTCOLOR,13,6) CCOLOR, substr(CURRENTCOLOR,10,2) BR, substr(CURRENTCOLOR,5,2) TURN FROM magichome_devices where ID=$deviceid")['CCOLOR'];
-  $oldcolor=SQLSelectOne("SELECT *, RGBCURRENT CCOLOR, substr(CURRENTCOLOR,10,2) BR, substr(CURRENTCOLOR,5,2) TURN FROM magichome_devices where ID=$deviceid")['CCOLOR'];
+	$this->getinfo2($deviceid);
+	//$oldcolor=SQLSelectOne("SELECT *, substr(CURRENTCOLOR,13,6) CCOLOR, substr(CURRENTCOLOR,10,2) BR, substr(CURRENTCOLOR,5,2) TURN FROM magichome_devices where ID=$deviceid")['CCOLOR'];	
+	$oldcolor=SQLSelectOne("SELECT *, RGBCURRENT CCOLOR, substr(CURRENTCOLOR,10,2) BR, substr(CURRENTCOLOR,5,2) TURN FROM magichome_devices where ID=$deviceid")['CCOLOR'];
+	$colorhex=str_replace('#','',$oldcolor);
+	$ar =(str_split($colorhex, 2));
 
-                        $colorhex=str_replace('#','',$oldcolor);
-			$ar =(str_split($colorhex, 2));
+	$m1=hexdec($ar[0]);
+	$m2=hexdec($ar[1]);
+	$m3=hexdec($ar[2]);
+	
+	$textcolor=$this->rgb2text($m1,$m2,$m3);
+	$nextcolor=$this->nextcolor($m1,$m2,$m3);
+	$arr =str_split($nextcolor, 2);
+	
+	
+	$new1=$arr[0];
+	$new2=$arr[1];
+	$new3=$arr[2];
 
-$m1=hexdec($ar[0]);
-$m2=hexdec($ar[1]);
-$m3=hexdec($ar[2]);
-
-$textcolor=$this->rgb2text($m1,$m2,$m3);
-$nextcolor=$this->nextcolor($m1,$m2,$m3);
-$arr =str_split($nextcolor, 2);
-
-
-$new1=$arr[0];
-$new2=$arr[1];
-$new3=$arr[2];
-
-
-
-//$new1=str_pad(dechex($m1), 2, "0", STR_PAD_LEFT);
-//$new2=str_pad(dechex($m2), 2, "0", STR_PAD_LEFT);
-//$new3=str_pad(dechex($m3), 2, "0", STR_PAD_LEFT);
-sg('test.mh',$deviceid.":".$command.":".$value.":".$oldcolor.":".$nextcolor.":".$new1.":".$new2.":".$new3.":".$textcolor);
-
-//     $magichomeObject = new magichome();
-     $this->set_colorhex($deviceid, $new1,$new2,$new3);
-     $this->getinfo2($deviceid, $debug);
-}
+	//$new1=str_pad(dechex($m1), 2, "0", STR_PAD_LEFT);
+	//$new2=str_pad(dechex($m2), 2, "0", STR_PAD_LEFT);
+	//$new3=str_pad(dechex($m3), 2, "0", STR_PAD_LEFT);
+	sg('test.mh',$deviceid.":".$command.":".$value.":".$oldcolor.":".$nextcolor.":".$new1.":".$new2.":".$new3.":".$textcolor);
+	
+	//$magichomeObject = new magichome();
+    $this->set_colorhex($deviceid, $new1,$new2,$new3);
+    $this->getinfo2($deviceid, $debug);
+ }
 
 
  function search_devices(&$out) {
-
-$mhdevices=SQLSelect("SELECT * FROM magichome_devices");
-$total = count($mhdevices);
-for ($i = 0; $i < $total; $i++)
-{ 
-$ip=$mhdevices[$i]['IP'];
-$lastping=$mhdevices[$i]['LASTPING'];
-//echo time()-$lastping;
-if ((!$lastping)||(time()-$lastping>300))
-
-
-{
-
-
-
-$cmd='
-$online=ping(processTitle("'.$ip.'"));
-if ($online) 
-{SQLexec("update magichome_devices set ONLINE=1, LASTPING='.time().' where IP=\''.$ip.'\'");} 
-else 
-{SQLexec("update magichome_devices set ONLINE=0, LASTPING='.time().' where IP=\''.$ip.'\'");}
-
-';
- SetTimeOut('magichome_ping'.$i,$cmd, '1'); 
-
-
-}
-
-}
-
-
-  $mhdevices=SQLSelect("SELECT *, substr(CURRENTCOLOR,13,6) CCOLOR, substr(CURRENTCOLOR,10,2) BR, substr(CURRENTCOLOR,5,2) TURN FROM magichome_devices");
-     $total = count($mhdevices);
-         for ($i = 0; $i < $total; $i++) {
-
-  $mhdevices[$i]['COMMANDS']=SQLSelect('select * from magichome_effects');
-}
-
-
-  if ($mhdevices[0]['ID']) {
-
-   $out['DEVICES']=$mhdevices;
-
-    }
-
+	$mhdevices=SQLSelect("SELECT * FROM magichome_devices");
+	$total = count($mhdevices);
+	for ($i = 0; $i < $total; $i++){
+		$ip=$mhdevices[$i]['IP'];
+		$lastping=$mhdevices[$i]['LASTPING'];
+		//echo time()-$lastping;
+		if ((!$lastping)||(time()-$lastping>300)){
+			$cmd='
+			$online=ping(processTitle("'.$ip.'"));
+			if ($online) 
+			{SQLexec("update magichome_devices set ONLINE=1, LASTPING='.time().' where IP=\''.$ip.'\'");} 
+			else 
+			{SQLexec("update magichome_devices set ONLINE=0, LASTPING='.time().' where IP=\''.$ip.'\'");}
+			';
+			SetTimeOut('magichome_ping'.$i,$cmd, '1'); 
+		}
+	}
+	
+	
+	$mhdevices=SQLSelect("SELECT *, substr(CURRENTCOLOR,13,6) CCOLOR, substr(CURRENTCOLOR,10,2) BR, substr(CURRENTCOLOR,5,2) TURN FROM magichome_devices");
+	$total = count($mhdevices);
+	for ($i = 0; $i < $total; $i++) {
+		$mhdevices[$i]['COMMANDS']=SQLSelect('select * from magichome_effects');
+	}
+	if ($mhdevices[0]['ID']) {
+		$out['DEVICES']=$mhdevices;
+	}
 }   
 
 
@@ -538,201 +508,168 @@ function checkSettings() {
 //////////////////////////////////////////////
 //////////////////////////////////////////////
  function scan() {
+	$ip = "255.255.255.255";
+	$port = 48899;
+	$str  = 'HF-A11ASSISTHREAD';
+	$cs = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
-$ip = "255.255.255.255";
-$port = 48899;
-
-$str  = 'HF-A11ASSISTHREAD';
-
-
-		$cs = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-
-		if(!$cs){
-echo "error socket";
+	if(!$cs){
+		echo "error socket";
+	}
+	
+	socket_set_option($cs, SOL_SOCKET, SO_REUSEADDR, 1);
+	socket_set_option($cs, SOL_SOCKET, SO_BROADCAST, 1);
+	socket_set_option($cs, SOL_SOCKET, SO_RCVTIMEO, array('sec'=>1, 'usec'=>128));
+	socket_bind($cs, 0, 0);
+	socket_sendto($cs, $str, strlen($str), 0, $ip, $port);
+	//socket_recvfrom($sock, $buf,100, 0, $ip, $port);
+	while(@socket_recvfrom($cs, $buf, 1024, 0, $ip, $port)){
+		//sg('test.buf',$buf);
+		if($buf != NULL){
+			if ($ip) {
+				$par=explode(",",$buf);
+				$mhdevices=SQLSelect("SELECT * FROM magichome_devices where MAC='".$par[1]."' and IP='$ip'");
+				if ($mhdevices[0]['ID']) {}
+				else { 
+					//$id=0;
+					// $mhdevices=SQLSelect("SELECT max(ID) ID FROM magichome_devices");
+					//  if ($mhdevices[0]['ID']) {
+					//   $id=$mhdevices[0]['ID']+1;} 
+					
+					//$id=100;
+					
+					$mac=$par[1];
+					
+					$par1=array();
+					//$par1['ID'] = $id;
+					//$par['TITLE'] = 'RGB LED';
+					
+					$par1['TITLE'] = $par[2];
+					$par1['IP'] = $ip;
+					$par1['PORT'] = $port;
+					$par1['MODEL'] = $par[2];
+					$par1['MAC'] = $mac;
+					$par1['FIND'] = date('m/d/Y H:i:s',time());		
+					SQLInsert('magichome_devices', $par1);		 
+					
+					$sql="SELECT ID FROM magichome_devices where MAC='$mac' and  IP='$ip'";
+					//sg( 'test.sql', $sql);
+					$idd=SQLSelectOne($sql)['ID'];
+					//sg( 'test.sql', $sql);
+					//sg( 'test.id', $id.":".$idd);
+					
+					
+					$sql="SELECT max(ID) ID FROM magichome_commands where DEVICE_ID='$idd' ";
+					$cmd=SQLSelectOne($sql);
+					if ($cmd['ID']) { null;}
+					else {
+						$commands=array('status','level', 'color', 'answer', 'command');
+						$total = count($commands);
+						for ($i = 0; $i < $total; $i++) {
+							$cmd_rec=array();
+							$cmd_rec['DEVICE_ID']=$idd;
+							$cmd_rec['TITLE']=$commands[$i];
+							// $cmd_rec['MODEL']=$commands[$i];
+							SQLInsert('magichome_commands',$cmd_rec);
+						}
+					}
+				}
+			}
 		}
+	}
 
-		socket_set_option($cs, SOL_SOCKET, SO_REUSEADDR, 1);
-		socket_set_option($cs, SOL_SOCKET, SO_BROADCAST, 1);
-		socket_set_option($cs, SOL_SOCKET, SO_RCVTIMEO, array('sec'=>1, 'usec'=>128));
-		socket_bind($cs, 0, 0);
-
-socket_sendto($cs, $str, strlen($str), 0, $ip, $port);
-                    //socket_recvfrom($sock, $buf,100, 0, $ip, $port);
-		while(@socket_recvfrom($cs, $buf, 1024, 0, $ip, $port)){
-
-//sg('test.buf',$buf);
-
-
-
-			if($buf != NULL){
-if ($ip) {
-
-$par=explode(",",$buf);
-
-  $mhdevices=SQLSelect("SELECT * FROM magichome_devices where MAC='".$par[1]."' and IP='$ip'");
- if ($mhdevices[0]['ID']) {} else 
-
-{ 
-//$id=0;
-// $mhdevices=SQLSelect("SELECT max(ID) ID FROM magichome_devices");
-//  if ($mhdevices[0]['ID']) {
-//   $id=$mhdevices[0]['ID']+1;} 
-
-//$id=100;
-
-$mac=$par[1];
-
-$par1=array();
-//$par1['ID'] = $id;
-//$par['TITLE'] = 'RGB LED';
-
-$par1['TITLE'] = $par[2];
-$par1['IP'] = $ip;
-$par1['PORT'] = $port;
-$par1['MODEL'] = $par[2];
-$par1['MAC'] = $mac;
-$par1['FIND'] = date('m/d/Y H:i:s',time());		
-SQLInsert('magichome_devices', $par1);		 
-
-$sql="SELECT ID FROM magichome_devices where MAC='$mac' and  IP='$ip'";
-//sg( 'test.sql', $sql);
-$idd=SQLSelectOne($sql)['ID'];
-//sg( 'test.sql', $sql);
-//sg( 'test.id', $id.":".$idd);
-
-
-$sql="SELECT max(ID) ID FROM magichome_commands where DEVICE_ID='$idd' ";
-$cmd=SQLSelectOne($sql);
-  if ( $cmd['ID']) { null;} else {
-
-
-$commands=array('status','level', 'color', 'answer', 'command');
-$total = count($commands);
-     for ($i = 0; $i < $total; $i++) {
-
-               $cmd_rec=array();
-               $cmd_rec['DEVICE_ID']=$idd;
-               $cmd_rec['TITLE']=$commands[$i];
-//               $cmd_rec['MODEL']=$commands[$i];
-               SQLInsert('magichome_commands',$cmd_rec);
-           
-}}}}}}
-
-		@socket_shutdown($cs, 2);
-		socket_close($cs);
-
-
-
-
-
-
-
-}
+	@socket_shutdown($cs, 2);
+	socket_close($cs);
+ }
 
 
  function scansp108e() {
+	debmes('run funtion scan sp108e', 'sp108e');
 
-debmes('run funtion scan sp108e', 'sp108e');
+	$ip = "192.168.1.5";
+	$port = 7;
+	$hstr=0x38d457a97783;
+	$str  = hex2bin($hstr);
+	debmes('str:'.$str, 'sp108e');
+	
+	$cs = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+	
+	if(!$cs){
+		echo "error socket";
+		debmes('error socket', 'sp108e');
+	}
+	
+	debmes('socket crated', 'sp108e');
+	socket_set_option($cs, SOL_SOCKET, SO_REUSEADDR, 1);
+	socket_set_option($cs, SOL_SOCKET, SO_BROADCAST, 1);
+	socket_set_option($cs, SOL_SOCKET, SO_RCVTIMEO, array('sec'=>1, 'usec'=>128));
+	socket_bind($cs, 0, 0);
+	
+	socket_sendto($cs, $str, strlen($str), 0, $ip, $port);
+	debmes('packet sendig'.$buf, 'sp108e');
+	//socket_recvfrom($sock, $buf,100, 0, $ip, $port);
+	while(@socket_recvfrom($cs, $buf, 1024, 0, $ip, $port)){
+		//sg('test.buf',$buf);
+		if($buf != NULL){
+			echo   $buf;
+			debmes('receive packet'.$buf, 'sp108e');
+			/*
+			if ($ip) {
+			echo 
+			
+			$par=explode(",",$buf);
+			
+			$mhdevices=SQLSelect("SELECT * FROM magichome_devices where MAC='".$par[1]."' and IP='$ip'");
+			if ($mhdevices[0]['ID']) {} else 
+			
+			{ 
+			//$id=0;
+			// $mhdevices=SQLSelect("SELECT max(ID) ID FROM magichome_devices");
+			//  if ($mhdevices[0]['ID']) {
+			//   $id=$mhdevices[0]['ID']+1;} 
+			
+			//$id=100;
+			
+			$mac=$par[1];
+			
+			$par1=array();
+			//$par1['ID'] = $id;
+			//$par['TITLE'] = 'RGB LED';
+			
+			$par1['TITLE'] = $par[2];
+			$par1['IP'] = $ip;
+			$par1['PORT'] = $port;
+			$par1['MODEL'] = $par[2];
+			$par1['MAC'] = $mac;
+			$par1['FIND'] = date('m/d/Y H:i:s',time());		
+			SQLInsert('magichome_devices', $par1);		 
+			
+			$sql="SELECT ID FROM magichome_devices where MAC='$mac' and  IP='$ip'";
+			//sg( 'test.sql', $sql);
+			$idd=SQLSelectOne($sql)['ID'];
+			//sg( 'test.sql', $sql);
+			//sg( 'test.id', $id.":".$idd);
+			
+			$sql="SELECT max(ID) ID FROM magichome_commands where DEVICE_ID='$idd' ";
+			$cmd=SQLSelectOne($sql);
+			if ( $cmd['ID']) { null;} else {
 
-$ip = "192.168.1.5";
-$port = 7;
-$hstr=0x38d457a97783;
-$str  = hex2bin($hstr);
-debmes('str:'.$str, 'sp108e');
-
-		$cs = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-
-		if(!$cs){
-echo "error socket";
-debmes('error socket', 'sp108e');
+			$commands=array('status','level', 'color', 'answer', 'command');
+			$total = count($commands);
+				for ($i = 0; $i < $total; $i++) {
+			
+						$cmd_rec=array();
+						$cmd_rec['DEVICE_ID']=$idd;
+						$cmd_rec['TITLE']=$commands[$i];
+			//               $cmd_rec['MODEL']=$commands[$i];
+						SQLInsert('magichome_commands',$cmd_rec);
+					
+			}}}}}}
+					@socket_shutdown($cs, 2);
+					socket_close($cs);
+			*/	
 		}
-
-debmes('socket crated', 'sp108e');
-		socket_set_option($cs, SOL_SOCKET, SO_REUSEADDR, 1);
-		socket_set_option($cs, SOL_SOCKET, SO_BROADCAST, 1);
-		socket_set_option($cs, SOL_SOCKET, SO_RCVTIMEO, array('sec'=>1, 'usec'=>128));
-		socket_bind($cs, 0, 0);
-
-socket_sendto($cs, $str, strlen($str), 0, $ip, $port);
-debmes('packet sendig'.$buf, 'sp108e');
-                    //socket_recvfrom($sock, $buf,100, 0, $ip, $port);
-		while(@socket_recvfrom($cs, $buf, 1024, 0, $ip, $port)){
-
-//sg('test.buf',$buf);
-
-
-			if($buf != NULL){
-
-echo   $buf;
-debmes('receive packet'.$buf, 'sp108e');
-
-/*
-if ($ip) {
-echo 
-
-$par=explode(",",$buf);
-
-  $mhdevices=SQLSelect("SELECT * FROM magichome_devices where MAC='".$par[1]."' and IP='$ip'");
- if ($mhdevices[0]['ID']) {} else 
-
-{ 
-//$id=0;
-// $mhdevices=SQLSelect("SELECT max(ID) ID FROM magichome_devices");
-//  if ($mhdevices[0]['ID']) {
-//   $id=$mhdevices[0]['ID']+1;} 
-
-//$id=100;
-
-$mac=$par[1];
-
-$par1=array();
-//$par1['ID'] = $id;
-//$par['TITLE'] = 'RGB LED';
-
-$par1['TITLE'] = $par[2];
-$par1['IP'] = $ip;
-$par1['PORT'] = $port;
-$par1['MODEL'] = $par[2];
-$par1['MAC'] = $mac;
-$par1['FIND'] = date('m/d/Y H:i:s',time());		
-SQLInsert('magichome_devices', $par1);		 
-
-$sql="SELECT ID FROM magichome_devices where MAC='$mac' and  IP='$ip'";
-//sg( 'test.sql', $sql);
-$idd=SQLSelectOne($sql)['ID'];
-//sg( 'test.sql', $sql);
-//sg( 'test.id', $id.":".$idd);
-
-
-$sql="SELECT max(ID) ID FROM magichome_commands where DEVICE_ID='$idd' ";
-$cmd=SQLSelectOne($sql);
-  if ( $cmd['ID']) { null;} else {
-
-
-$commands=array('status','level', 'color', 'answer', 'command');
-$total = count($commands);
-     for ($i = 0; $i < $total; $i++) {
-
-               $cmd_rec=array();
-               $cmd_rec['DEVICE_ID']=$idd;
-               $cmd_rec['TITLE']=$commands[$i];
-//               $cmd_rec['MODEL']=$commands[$i];
-               SQLInsert('magichome_commands',$cmd_rec);
-           
-}}}}}}
-
-		@socket_shutdown($cs, 2);
-		socket_close($cs);
-
-
-
-
-
-
-*/
-
-}
-}
+	}
 }
 
  function edit_magichome_devices(&$out, $id) {
@@ -744,7 +681,7 @@ $total = count($commands);
 
 
 
-function delete_once($id) {
+ function delete_once($id) {
   SQLExec("DELETE FROM magichome_devices WHERE id=".$id);
   SQLExec("DELETE FROM magichome_commands WHERE DEVICE_ID='$id'");
   $this->redirect("?");
@@ -753,290 +690,244 @@ function delete_once($id) {
 
 
 function turnon($id) {
-$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
-$host=$cmd_rec['IP'];
-
-$port=5577;
-
-
-$debug="";
-
-
-if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"))))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-    die("Couldn't create socket: [$errorcode] $errormsg \n");
-}
-
-//Connect socket to remote server
-if(!socket_connect($sock , $host , $port))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-
-}
-
-
-//71:23:0f:a3
-        $broadcast_string = chr(0x71).chr(0x23).chr(0x0f).chr(0xa3);
-
-        socket_sendto($sock, $broadcast_string, strlen($broadcast_string), 0, $host, $port);
-
-
-
-
+	$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
+	$host=$cmd_rec['IP'];
+	$port=5577;
+	$debug="";
+	if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp")))){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+		die("Couldn't create socket: [$errorcode] $errormsg \n");
+	}
+	//Connect socket to remote server
+	if(!socket_connect($sock , $host , $port)){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+	}
+	$broadcast_string = chr(0x71).chr(0x23).chr(0x0f).chr(0xa3);
+	socket_sendto($sock, $broadcast_string, strlen($broadcast_string), 0, $host, $port);
  }
 
 
 function turnoff($id) {
 
-$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
-$host=$cmd_rec['IP'];
+	$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
+	$host=$cmd_rec['IP'];
+	
+	$port=5577;
 
-$port=5577;
-
-
-if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"))))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-    die("Couldn't create socket: [$errorcode] $errormsg \n");
-}
-
-//Connect socket to remote server
-if(!socket_connect($sock , $host , $port))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-
-}
-
-//71:24:0f:a4
-
-        $broadcast_string = chr(0x71).chr(0x24).chr(0x0f).chr(0xa4);
-
-        socket_sendto($sock, $broadcast_string, strlen($broadcast_string), 0, $host, $port);
+	if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp")))){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+		die("Couldn't create socket: [$errorcode] $errormsg \n");
+	}
+	
+	//Connect socket to remote server
+	if(!socket_connect($sock , $host , $port)){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+	
+	}
+	$broadcast_string = chr(0x71).chr(0x24).chr(0x0f).chr(0xa4);
+	socket_sendto($sock, $broadcast_string, strlen($broadcast_string), 0, $host, $port);
 }
 
 
 function set_colordec($id, $R,$G,$B) {
-//color         1 1 1 	31:01:01:01:00:f0:0f:33
-
-$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
-$host=$cmd_rec['IP'];
-
-$port=5577;
-
-
-if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"))))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-    die("Couldn't create socket: [$errorcode] $errormsg \n");
-}
-
-//Connect socket to remote server
-if(!socket_connect($sock , $host , $port))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-
-}
-
-//71:24:0f:a4
-
-//        $broadcast_string = chr(0x71).chr(0x24).chr(0x0f).chr(0xa4);
-
-//color         1 1 1 	31:01:01:01:00:f0:0f:33
-//str_pad (27, 5,"0",STR_PAD_LEFT); 
-$HR=str_pad(dechex($R),2,"0");
-$HG=str_pad(dechex($G),2,"0");
-$HB=str_pad(dechex($B),2,"0");
-
-//$HR=dechex($R);
-//$HG=dechex($G);
-//$HB=dechex($B);
-
-//$message="31:01:01:01:00:f0:0f";
-$message="31:$HR:$HG:$HB:00:f0:0f";
-$message=str_replace(":","",$message);
-$message=$message.$this->csum($message);
-//sg('test.message', $message);
-$hexmessage=hex2bin($message);
-
-        socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
-        usleep(100);
-socket_close($sock);
+	//color         1 1 1 	31:01:01:01:00:f0:0f:33
+	
+	$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
+	$host=$cmd_rec['IP'];
+	
+	$port=5577;
+	
+	if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp")))){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+	
+		die("Couldn't create socket: [$errorcode] $errormsg \n");
+	}
+	
+	//Connect socket to remote server
+	if(!socket_connect($sock , $host , $port)){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+	}
+	
+	//71:24:0f:a4
+	
+	//        $broadcast_string = chr(0x71).chr(0x24).chr(0x0f).chr(0xa4);
+	
+	//color         1 1 1 	31:01:01:01:00:f0:0f:33
+	//str_pad (27, 5,"0",STR_PAD_LEFT); 
+	$HR=str_pad(dechex($R),2,"0");
+	$HG=str_pad(dechex($G),2,"0");
+	$HB=str_pad(dechex($B),2,"0");
+	
+	//$HR=dechex($R);
+	//$HG=dechex($G);
+	//$HB=dechex($B);
+	
+	//$message="31:01:01:01:00:f0:0f";
+	$message="31:$HR:$HG:$HB:00:f0:0f";
+	$message=str_replace(":","",$message);
+	$message=$message.$this->csum($message);
+	//sg('test.message', $message);
+	$hexmessage=hex2bin($message);
+	
+	socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
+	usleep(100);
+	socket_close($sock);
 }
 
 
 function set_command($id, $command, $speed) {
 
-$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
-$host=$cmd_rec['IP'];
+	$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
+	$host=$cmd_rec['IP'];
+	
+	$port=5577;
+	
+	if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp")))){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+		die("Couldn't create socket: [$errorcode] $errormsg \n");
+	}
+	
+	//Connect socket to remote server
+	if(!socket_connect($sock , $host , $port)){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
 
-$port=5577;
-
-
-if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"))))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-    die("Couldn't create socket: [$errorcode] $errormsg \n");
-}
-
-//Connect socket to remote server
-if(!socket_connect($sock , $host , $port))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-
-}
-//0x61	command of setting builted-in mode	
-//Send	【0x61】+【8bit mode value】+【8bit speed value】+【0xF0 remote,0x0F local】+【check digit】(length of command:5)	
-//Return	If command is local(0x0F):no return
-//	If command is remote (0xF0):【0xF0 remote】+ 【0X61】+【0x00】+【check digit】"	
-//	Note:mode value refers to definition in the end of file,range of speed value is 0x01--0x1F	
-
-$CMD=SQLSelectOne('select * from magichome_effects where ID='.$command)['CODE'];
-$CM=explode("x",$CMD)[1];
-
-//$message="61:$CM:01:F0";
-$message="61:$CM:$speed:F0";
-//echo $message;
-$message=str_replace(":","",$message);
-$message=$message.$this->csum($message);
-$hexmessage=hex2bin($message);
-
-        socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
-        usleep(100);
-socket_close($sock);
+	}
+	//0x61	command of setting builted-in mode	
+	//Send	【0x61】+【8bit mode value】+【8bit speed value】+【0xF0 remote,0x0F local】+【check digit】(length of command:5)	
+	//Return	If command is local(0x0F):no return
+	//	If command is remote (0xF0):【0xF0 remote】+ 【0X61】+【0x00】+【check digit】"	
+	//	Note:mode value refers to definition in the end of file,range of speed value is 0x01--0x1F	
+	
+	$CMD=SQLSelectOne('select * from magichome_effects where ID='.$command)['CODE'];
+	$CM=explode("x",$CMD)[1];
+	
+	//$message="61:$CM:01:F0";
+	$message="61:$CM:$speed:F0";
+	//echo $message;
+	$message=str_replace(":","",$message);
+	$message=$message.$this->csum($message);
+	$hexmessage=hex2bin($message);
+	
+	socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
+	usleep(100);
+	socket_close($sock);
 }
 
 
 function set_colorhex($id, $HR,$HG,$HB) {
-//color         1 1 1 	31:01:01:01:00:f0:0f:33
-
-$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
-$host=$cmd_rec['IP'];
-
-$port=5577;
-
-
-if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"))))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-    die("Couldn't create socket: [$errorcode] $errormsg \n");
-}
-
-//Connect socket to remote server
-if(!socket_connect($sock , $host , $port))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-
-}
-
-//71:24:0f:a4
-
-//        $broadcast_string = chr(0x71).chr(0x24).chr(0x0f).chr(0xa4);
-
-//color         1 1 1 	31:01:01:01:00:f0:0f:33
-//str_pad (27, 5,"0",STR_PAD_LEFT); 
-//$HR=str_pad(dechex($R),2,"0");
-//$HG=str_pad(dechex($G),2,"0");
-//$HB=str_pad(dechex($B),2,"0");
-
-//$HR=dechex($R);
-//$HG=dechex($G);
-//$HB=dechex($B);
-
-//$message="31:01:01:01:00:f0:0f";
-$message="31:$HR:$HG:$HB:00:f0:0f";
-$message=str_replace(":","",$message);
-$message=$message.$this->csum($message);
-//sg('test.message', $message);
-$hexmessage=hex2bin($message);
-
-        socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
-        usleep(100);
-socket_close($sock);
+	//color         1 1 1 	31:01:01:01:00:f0:0f:33
+	
+	$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
+	$host=$cmd_rec['IP'];
+	
+	$port=5577;
+	
+	if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp")))){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+	
+		die("Couldn't create socket: [$errorcode] $errormsg \n");
+	}
+	
+	//Connect socket to remote server
+	if(!socket_connect($sock , $host , $port)){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+	}
+	
+	//71:24:0f:a4
+	
+	//        $broadcast_string = chr(0x71).chr(0x24).chr(0x0f).chr(0xa4);
+	
+	//color         1 1 1 	31:01:01:01:00:f0:0f:33
+	//str_pad (27, 5,"0",STR_PAD_LEFT); 
+	//$HR=str_pad(dechex($R),2,"0");
+	//$HG=str_pad(dechex($G),2,"0");
+	//$HB=str_pad(dechex($B),2,"0");
+	
+	//$HR=dechex($R);
+	//$HG=dechex($G);
+	//$HB=dechex($B);
+	
+	//$message="31:01:01:01:00:f0:0f";
+	$message="31:$HR:$HG:$HB:00:f0:0f";
+	$message=str_replace(":","",$message);
+	$message=$message.$this->csum($message);
+	//sg('test.message', $message);
+	$hexmessage=hex2bin($message);
+	
+	socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
+	usleep(100);
+	socket_close($sock);
 }
 
 
 function set_colorrgb($id, $rgb) {
-$rgb1=str_replace('#','',$rgb);
-$rgb2=$this->rgbbgr_get($rgb1,$id);
-
-$ar =str_split($rgb2, 2);
-
-debmes($id.':'.$rgb1.':'.$rgb2,'magichome');
-$HR=$ar[0];
-$HG=$ar[1];
-$HB=$ar[2];
-
-
-//color         1 1 1 	31:01:01:01:00:f0:0f:33
-
-$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
-$host=$cmd_rec['IP'];
-
-$port=5577;
-
-
-if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"))))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-    die("Couldn't create socket: [$errorcode] $errormsg \n");
-}
-
-//Connect socket to remote server
-if(!socket_connect($sock , $host , $port))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-
-}
-
-//71:24:0f:a4
-
-//        $broadcast_string = chr(0x71).chr(0x24).chr(0x0f).chr(0xa4);
-
-//color         1 1 1 	31:01:01:01:00:f0:0f:33
-//str_pad (27, 5,"0",STR_PAD_LEFT); 
-//$HR=str_pad(dechex($R),2,"0");
-//$HG=str_pad(dechex($G),2,"0");
-//$HB=str_pad(dechex($B),2,"0");
-
-//$HR=dechex($R);
-//$HG=dechex($G);
-//$HB=dechex($B);
-
-//$message="31:01:01:01:00:f0:0f";
-$message="31:$HR:$HG:$HB:00:f0:0f";
-$message=str_replace(":","",$message);
-$message=$message.$this->csum($message);
-//sg('test.message', $message);
-$hexmessage=hex2bin($message);
-
-        socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
-        usleep(100);
-socket_close($sock);
+	$rgb1=str_replace('#','',$rgb);
+	$rgb2=$this->rgbbgr_get($rgb1,$id);
+	
+	$ar =str_split($rgb2, 2);
+	
+	debmes($id.':'.$rgb1.':'.$rgb2,'magichome');
+	$HR=$ar[0];
+	$HG=$ar[1];
+	$HB=$ar[2];
+	
+	
+	//color         1 1 1 	31:01:01:01:00:f0:0f:33
+	
+	$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
+	$host=$cmd_rec['IP'];
+	
+	$port=5577;
+	
+	
+	if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp")))){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+		die("Couldn't create socket: [$errorcode] $errormsg \n");
+	}
+	
+	//Connect socket to remote server
+	if(!socket_connect($sock , $host , $port)){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+	
+	
+	}
+	
+	//71:24:0f:a4
+	
+	//        $broadcast_string = chr(0x71).chr(0x24).chr(0x0f).chr(0xa4);
+	
+	//color         1 1 1 	31:01:01:01:00:f0:0f:33
+	//str_pad (27, 5,"0",STR_PAD_LEFT); 
+	//$HR=str_pad(dechex($R),2,"0");
+	//$HG=str_pad(dechex($G),2,"0");
+	//$HB=str_pad(dechex($B),2,"0");
+	
+	//$HR=dechex($R);
+	//$HG=dechex($G);
+	//$HB=dechex($B);
+	
+	//$message="31:01:01:01:00:f0:0f";
+	$message="31:$HR:$HG:$HB:00:f0:0f";
+	$message=str_replace(":","",$message);
+	$message=$message.$this->csum($message);
+	//sg('test.message', $message);
+	$hexmessage=hex2bin($message);
+	
+	socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
+	usleep(100);
+	socket_close($sock);
 }
 
 
@@ -1044,254 +935,193 @@ socket_close($sock);
 function brightness($id, $brightness) {
 //color         1 1 1 	31:01:01:01:00:f0:0f:33
 
-$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
-$host=$cmd_rec['IP'];
+	$cmd_rec = SQLSelectOne("SELECT IP, PORT FROM magichome_devices WHERE id=".$id);
+	$host=$cmd_rec['IP'];
 
-$port=5577;
+	$port=5577;
 
-
-if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"))))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-    die("Couldn't create socket: [$errorcode] $errormsg \n");
-}
-
-//Connect socket to remote server
-if(!socket_connect($sock , $host , $port))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-
-}
-
-//31:00:00:00:05:0f:0f:54 //1%
-//31:00:00:00:7f:0f:0f:ce //50%
-//31:00:00:00:ff:0f:0f:4e //100 %
-
-
-//        $broadcast_string = chr(0x71).chr(0x24).chr(0x0f).chr(0xa4);
-
-//color         1 1 1 	31:01:01:01:00:f0:0f:33
-//str_pad (27, 5,"0",STR_PAD_LEFT); 
-$BR=str_pad(dechex($brightness),2,"0");
-
-//$HR=dechex($R);
-//$HG=dechex($G);
-//$HB=dechex($B);
-
-//$message="31:01:01:01:00:f0:0f";
-$message="31:00:00:00:".$BR.":f0:0f";
-$message=str_replace(":","",$message);
-$message=$message.$this->csum($message);
-//sg('test.message', $message);
-$hexmessage=hex2bin($message);
-
-        socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
-        usleep(100);
-socket_close($sock);
+	if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp")))){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+		die("Couldn't create socket: [$errorcode] $errormsg \n");
+	}
+	
+	//Connect socket to remote server
+	if(!socket_connect($sock , $host , $port)){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+	}
+	
+	//31:00:00:00:05:0f:0f:54 //1%
+	//31:00:00:00:7f:0f:0f:ce //50%
+	//31:00:00:00:ff:0f:0f:4e //100 %
+	
+	
+	//        $broadcast_string = chr(0x71).chr(0x24).chr(0x0f).chr(0xa4);
+	
+	//color         1 1 1 	31:01:01:01:00:f0:0f:33
+	//str_pad (27, 5,"0",STR_PAD_LEFT); 
+	$BR=str_pad(dechex($brightness),2,"0");
+	
+	//$HR=dechex($R);
+	//$HG=dechex($G);
+	//$HB=dechex($B);
+	
+	//$message="31:01:01:01:00:f0:0f";
+	$message="31:00:00:00:".$BR.":f0:0f";
+	$message=str_replace(":","",$message);
+	$message=$message.$this->csum($message);
+	//sg('test.message', $message);
+	$hexmessage=hex2bin($message);
+	
+	socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
+	usleep(100);
+	socket_close($sock);
 }
 
 
 
 
 function getinfo2($id=0) {
-$sql="SELECT *  FROM magichome_devices WHERE id=".$id;
-$cmd_rec = SQLSelectOne($sql);
-$host=$cmd_rec['IP'];
-$globalid=$id;
-$port=5577;
+	$sql="SELECT *  FROM magichome_devices WHERE id=".$id;
+	$cmd_rec = SQLSelectOne($sql);
+	$host=$cmd_rec['IP'];
+	$globalid=$id;
+	$port=5577;
 
+	sg('test.sql',$id.';'.$sql);
+	if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp")))){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+	
+		die("Couldn't create socket: [$errorcode] $errormsg \n");
+	}
+	
+	//Connect socket to remote server
+	if(!@socket_connect($sock , $host , $port)){
+		$errorcode = socket_last_error();
+		$errormsg = socket_strerror($errorcode);
+		return;
+	}
+	//81:8a:8b:96
+	$message="81:8a:8b";
+	$message=str_replace(":","",$message);
+	$message=$message.$this->csum($message);
+	//sg('test.message', $message);
+	$hexmessage=hex2bin($message);
+	
+	socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
+	
+	$receiveStr = "";
+	$receiveStr = socket_read($sock, 1024, PHP_BINARY_READ);  // The 2 band data received 
+	$receiveStrHex = bin2hex ($receiveStr);   // the 2 hexadecimal data convert 16 hex
+	
+	//	813323612105ff00000003000060 //R
+	//	81332361210500ff000003000060    //G
+	//	8133236121050000ff0003000060       //B
+	
+	SQLexec("update magichome_config set value='$receiveStrHex' where parametr='DEBUG'");
+	socket_close($sock);
+	$buf= $receiveStrHex;
+	
+	$tempid=$id;
+	//$tempid=8;
+	SQLexec("update magichome_devices set CURRENTCOLOR='$buf' where id='$id'");
+	
+	//$rgbclolor='#'.str_replace('#','',substr($buf,12,6));
+	$rgbclolor2=str_replace('#','',substr($buf,12,6));
+	
+	$rgbclolor=$this->rgbbgr_get($rgbclolor2, $id);
 
-sg('test.sql',$id.';'.$sql);
-if(!($sock = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"))))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-    die("Couldn't create socket: [$errorcode] $errormsg \n");
-}
-
-//Connect socket to remote server
-if(!socket_connect($sock , $host , $port))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-
-
-}
-//81:8a:8b:96
-$message="81:8a:8b";
-$message=str_replace(":","",$message);
-$message=$message.$this->csum($message);
-//sg('test.message', $message);
-$hexmessage=hex2bin($message);
-
-        socket_sendto($sock, $hexmessage, strlen($hexmessage), 0, $host, $port);
-
-            $receiveStr = "";
-            $receiveStr = socket_read($sock, 1024, PHP_BINARY_READ);  // The 2 band data received 
-                      $receiveStrHex = bin2hex ($receiveStr);   // the 2 hexadecimal data convert 16 hex
-
-
-
-
-//	813323612105ff00000003000060 //R
-//	81332361210500ff000003000060    //G
-//	8133236121050000ff0003000060       //B
-
-SQLexec("update magichome_config set value='$receiveStrHex' where parametr='DEBUG'");
-
-socket_close($sock);
-
-$buf= $receiveStrHex;
-
- 
-
-
-$tempid=$id;
-//$tempid=8;
-SQLexec("update magichome_devices set CURRENTCOLOR='$buf' where id='$id'");
-
-//$rgbclolor='#'.str_replace('#','',substr($buf,12,6));
-$rgbclolor2=str_replace('#','',substr($buf,12,6));
-
-
-$rgbclolor=$this->rgbbgr_get($rgbclolor2, $id);
-
-
-
-
-SQLexec("update magichome_devices set RGBCURRENT='$rgbclolor' where id='$id'");
-//echo substr($buf,5,2);
-//echo $buf;
-
-
-$sql="select * from  magichome_commands where device_id='".$tempid."'";
-     $properties = SQLSelect($sql);
-     $total = count($properties);
-     if ($total) {
-
-         for ($i = 0; $i < $total; $i++) {
-if ($properties[$i]['TITLE']=='status') {
-if (substr($buf,4,2)=='23') {$newvalue=1;} else {$newvalue=0;}
-} 
-//elseif ($properties[$i]['TITLE']=='color')  {$newvalue='#'.str_replace('#','',substr($buf,12,6));}
-elseif ($properties[$i]['TITLE']=='color')  {
-
-$newvalue=$rgbclolor;
-
-}
-elseif ($properties[$i]['TITLE']=='level')  
-{
-$tempclolor=str_replace('#','',substr($buf,12,6));
-$ar =(str_split($tempclolor, 2));
-//$newvalue=((hexdec($ar[0]/255))+(hexdec($ar[1]/255))+(hexdec($ar[2]/255)))/3;
-//$newvalue=round(hexdec((int)max($ar[0],$ar[1],$ar[2]))/255,2)*100;
-
-$newvalue=round(max(hexdec($ar[0]),hexdec($ar[1]),hexdec($ar[2]))/255,2)*100;
-}
-else $newvalue=$buf; 
-
-
-
-
-$title=$properties[$i]['TITLE'];
-$sql="select * from  magichome_commands where device_id='".$tempid."' and title='$title'" ;
-$myrec=SQLSelectOne($sql);
-
-
-
-$myrec['VALUE']=$newvalue;
-$myrec['UPDATED']=date('Y-m-d H:i:s');
-SQLUpdate('magichome_commands', $myrec);
-
-if ($myrec['LINKED_OBJECT']!='' && $myrec['LINKED_PROPERTY']!='') {
-setGlobal($myrec['LINKED_OBJECT'].'.'.$myrec['LINKED_PROPERTY'], $newvalue,array($this->name => '0'));
-}
-
-
-
-     if ($myrec['LINKED_OBJECT'] && $myrec['LINKED_METHOD']) { // && $old_value!=$prop['CURRENT_VALUE_STRING']
-      $params=array();
-      $params=$_REQUEST;
-      $params['TITLE']=$properties[$i]['TITLE'];
-      $params['VALUE']=$newvalue;
-
-
-      $methodRes=callMethod($myrec['LINKED_OBJECT'].'.'.$myrec['LINKED_METHOD'], $params);
-
-      if (is_string($methodRes)) {
-       $ecmd=$methodRes;
-      }
-
-     }
-
-
-
-}}
-
-      
-
-
+	SQLexec("update magichome_devices set RGBCURRENT='$rgbclolor' where id='$id'");
+	//echo substr($buf,5,2);
+	//echo $buf;
+	
+	$sql="select * from  magichome_commands where device_id='".$tempid."'";
+	$properties = SQLSelect($sql);
+	$total = count($properties);
+	if ($total) {
+	
+		for ($i = 0; $i < $total; $i++) {
+			if ($properties[$i]['TITLE']=='status') {
+				if (substr($buf,4,2)=='23') {$newvalue=1;} else {$newvalue=0;}
+			} 
+			//elseif ($properties[$i]['TITLE']=='color')  {$newvalue='#'.str_replace('#','',substr($buf,12,6));}
+			elseif ($properties[$i]['TITLE']=='color')  {
+				$newvalue=$rgbclolor;
+			}
+			elseif ($properties[$i]['TITLE']=='level'){
+				$tempclolor=str_replace('#','',substr($buf,12,6));
+				$ar =(str_split($tempclolor, 2));
+				//$newvalue=((hexdec($ar[0]/255))+(hexdec($ar[1]/255))+(hexdec($ar[2]/255)))/3;
+				//$newvalue=round(hexdec((int)max($ar[0],$ar[1],$ar[2]))/255,2)*100;
+				$newvalue=round(max(hexdec($ar[0]),hexdec($ar[1]),hexdec($ar[2]))/255,2)*100;
+			}
+			else $newvalue=$buf; 
+			$title=$properties[$i]['TITLE'];
+			$sql="select * from  magichome_commands where device_id='".$tempid."' and title='$title'" ;
+			$myrec=SQLSelectOne($sql);
+			$myrec['VALUE']=$newvalue;
+			$myrec['UPDATED']=date('Y-m-d H:i:s');
+			SQLUpdate('magichome_commands', $myrec);
+			if ($myrec['LINKED_OBJECT']!='' && $myrec['LINKED_PROPERTY']!='') {
+				setGlobal($myrec['LINKED_OBJECT'].'.'.$myrec['LINKED_PROPERTY'], $newvalue,array($this->name => '0'));
+			}
+			if ($myrec['LINKED_OBJECT'] && $myrec['LINKED_METHOD']) { // && $old_value!=$prop['CURRENT_VALUE_STRING']
+				$params=array();
+				$params=$_REQUEST;
+				$params['TITLE']=$properties[$i]['TITLE'];
+				$params['VALUE']=$newvalue;
+				
+				
+				$methodRes=callMethod($myrec['LINKED_OBJECT'].'.'.$myrec['LINKED_METHOD'], $params);
+				
+				if (is_string($methodRes)) {
+					$ecmd=$methodRes;
+				}
+			}	
+		}
+	}
 }
 
 
 function rgbbgr_get($rgb, $id){
 
-$sql="select * from  magichome_devices where id='".$id."'";
-$cmd_rec = SQLSelectOne($sql);
+	$sql="select * from  magichome_devices where id='".$id."'";
+	$cmd_rec = SQLSelectOne($sql);
+	$rgbclolor2=str_replace('#','',$rgb);
+	$arr2 =str_split($rgbclolor2, 2);
+	$rr=$arr2[0];
+	$gg=$arr2[1];
+	$bb=$arr2[2];
+	
+	$chrgb=$cmd_rec['RGB'];
 
-
-$rgbclolor2=str_replace('#','',$rgb);
-
-$arr2 =str_split($rgbclolor2, 2);
-
-$rr=$arr2[0];
-$gg=$arr2[1];
-$bb=$arr2[2];
-
-$chrgb=$cmd_rec['RGB'];
-
-
-switch ($chrgb)
-{
-case "RGB":
-$rgbclolor=$rr.$gg.$bb;
-break;
-
-
-case "RBG":
-$rgbclolor=$rr.$bb.$gg;
-break;
-
-
-case "GRB":
-$rgbclolor=$gg.$rr.$bb;
-break;
-
-
-case "GBR":
-$rgbclolor=$gg.$bb.$rr;
-break;
-
-
-case "BRG":
-$rgbclolor=$bb.$rr.$gg;
-break;
-
-case "BGR":
-$rgbclolor=$bb.$gg.$rr;
-break;
-default:
-$rgbclolor=$rr.$gg.$bb;
-}
-debmes($sql, 'magichome');
-debmes('$rgb:'. $rgb. ' id:'.$id.' rgbpar:'.$chrgb.' new:'.$rgbclolor, 'magichome');
-
-return $rgbclolor;
+	switch ($chrgb){
+		case "RGB":
+			$rgbclolor=$rr.$gg.$bb;
+			break;
+		case "RBG":
+			$rgbclolor=$rr.$bb.$gg;
+			break;
+		case "GRB":
+			$rgbclolor=$gg.$rr.$bb;
+			break;
+		case "GBR":
+			$rgbclolor=$gg.$bb.$rr;
+			break;
+		case "BRG":
+			$rgbclolor=$bb.$rr.$gg;
+			break;
+		case "BGR":
+			$rgbclolor=$bb.$gg.$rr;
+			break;
+		default:
+			$rgbclolor=$rr.$gg.$bb;
+	}
+	debmes($sql, 'magichome');
+	debmes('$rgb:'. $rgb. ' id:'.$id.' rgbpar:'.$chrgb.' new:'.$rgbclolor, 'magichome');
+	return $rgbclolor;
 }
 
 
@@ -1354,383 +1184,345 @@ function changerandom($id) {
 * @access private
 */
  function dbInstall($data = '') {
-
- $data = <<<EOD
- magichome_devices: ID int(10) unsigned NOT NULL auto_increment
- magichome_devices: TITLE varchar(100) NOT NULL DEFAULT ''
- magichome_devices: IP varchar(100) NOT NULL DEFAULT ''
- magichome_devices: PORT varchar(100) NOT NULL DEFAULT ''
- magichome_devices: MAC varchar(100) NOT NULL DEFAULT ''
- magichome_devices: ONLINE varchar(100) NOT NULL DEFAULT ''
- magichome_devices: LASTPING varchar(100) NOT NULL DEFAULT ''
- magichome_devices: FAVORITCOLOR varchar(100) NOT NULL DEFAULT ''
- magichome_devices: CURRENTCOLOR varchar(100) NOT NULL DEFAULT ''
- magichome_devices: FIND varchar(100) NOT NULL DEFAULT ''
- magichome_devices: MODEL varchar(100) NOT NULL DEFAULT ''
- magichome_devices: ZONE varchar(100) NOT NULL DEFAULT ''
- magichome_devices: LINKED_OBJECT varchar(100) NOT NULL DEFAULT ''
- magichome_devices: LINKED_PROPERTY varchar(100) NOT NULL DEFAULT ''
- magichome_devices: RGB varchar(100) NOT NULL DEFAULT '' 
- magichome_devices: RGBCURRENT varchar(100) NOT NULL DEFAULT '' 
-EOD;
-  parent::dbInstall($data);
-
-
- $data = <<<EOD
- magichome_commands: ID int(10) unsigned NOT NULL auto_increment
- magichome_commands: TITLE varchar(100) NOT NULL DEFAULT ''
- magichome_commands: VALUE varchar(255) NOT NULL DEFAULT ''
- magichome_commands: DEVICE_ID int(10) NOT NULL DEFAULT '0'
- magichome_commands: LINKED_OBJECT varchar(100) NOT NULL DEFAULT ''
- magichome_commands: LINKED_PROPERTY varchar(100) NOT NULL DEFAULT ''
- magichome_commands: LINKED_METHOD varchar(100) NOT NULL DEFAULT '' 
-
- magichome_commands: UPDATED datetime
-EOD;
-  parent::dbInstall($data);
-
-
- $data = <<<EOD
- magichome_effects: ID int(10) unsigned NOT NULL auto_increment
- magichome_effects: TITLE varchar(100) NOT NULL DEFAULT ''
- magichome_effects: CODE varchar(255) NOT NULL DEFAULT ''
- magichome_effects: DEVICE_TYPE varchar(100) NOT NULL DEFAULT ''
-EOD;
-  parent::dbInstall($data);
-
-
-
- $data = <<<EOD
- magichome_config: parametr  varchar(300) 
- magichome_config: value varchar(10000)  
-EOD;
-  parent::dbInstall($data);
-
-//  $mhdevices=SQLSelect("SELECT *  FROM magichome_commands");
-  $mhdevices=SQLSelect("SELECT *  FROM magichome_commands");
-  if (!$mhdevices[0]['ID']) 
-{
-
-$par=array();		 
-$par['TITLE'] = 'command';
-$par['ID'] = "1";		 
-SQLInsert('magichome_commands', $par);		 
-
-$par['TITLE'] = 'color';
-$par['ID'] = "2";		 
-SQLInsert('magichome_commands', $par);		 
-                	
-$par['TITLE'] = 'level';
-$par['ID'] = "3";		 
-SQLInsert('magichome_commands', $par);		 
-
-$par['TITLE'] = 'status';
-$par['ID'] = "4";		 
-SQLInsert('magichome_commands', $par);		 
-
-}
-
-
-$par2=SQLSelectOne("SELECT *  FROM magichome_config where parametr='DEBUG'");
-if (!$par2['value']) {
-$par2['parametr'] = 'DEBUG';
-$par2['value'] = "";		 
-SQLInsert('magichome_config', $par2);		 
-}
-
-
-$par2=SQLSelectOne("SELECT *  FROM magichome_config where parametr='EVERY'");
-if (!$par2['value']) {
-$par2['parametr'] = 'EVERY';
-$par2['value'] = "300";		 
-SQLInsert('magichome_config', $par2);		 
-}
-
-$par2=SQLSelectOne("SELECT *  FROM magichome_config where parametr='LASTCYCLE_TS'");
-if (!$par2['value']) {
-
-$par2['parametr'] = 'LASTCYCLE_TS';
-$par2['value'] = "";		 
-SQLInsert('magichome_config', $par2);		 
-}
-
-$par2=SQLSelectOne("SELECT *  FROM magichome_config where parametr='ENABLE'");
-if (!$par2['value']) {
-
-$par2['parametr'] = 'ENABLE';
-$par2['value'] = "1";		 
-SQLInsert('magichome_config', $par2);		 
-}
-
-
-
-
-$par1=SQLSelectOne ("select * from magichome_effects where ID=1");
-
-if (!$par1['ID']) {
-
-
-$par1['ID'] = 1;
-$par1['TITLE'] = '7 colors gradual change';
-$par1['CODE'] = '0x25';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-$par1['ID'] = 2;
-$par1['TITLE'] = 'red gradual change';
-$par1['CODE'] = '0x26';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-$par1['ID'] = 3;
-$par1['TITLE'] = 'green gradual change';
-$par1['CODE'] = '0x27';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 4;
-$par1['TITLE'] = 'glue gradual change';
-$par1['CODE'] = '0x28';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 5;
-$par1['TITLE'] = 'yellow gradual change';
-$par1['CODE'] = '0x29';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 6;
-$par1['TITLE'] = 'cyan gradual change';
-$par1['CODE'] = '0x2A';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-
-$par1['ID'] = 7;
-$par1['TITLE'] = 'purple gradual change';
-$par1['CODE'] = '0x2B';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 8;
-$par1['TITLE'] = 'white gradual change';
-$par1['CODE'] = '0x2C';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 9;
-$par1['TITLE'] = 'red and green gradual change';
-$par1['CODE'] = '0x2D';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 10;
-$par1['TITLE'] = 'red and blue gradual change';
-$par1['CODE'] = '0x2E';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-$par1['ID'] = 11;
-$par1['TITLE'] = 'green and blue gradual change';
-$par1['CODE'] = '0x2F';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-$par1['ID'] = 12;
-$par1['TITLE'] = '7 colors stroboflash';
-$par1['CODE'] = '0x30';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-$par1['ID'] = 13;
-$par1['TITLE'] = 'red stroboflash';
-$par1['CODE'] = '0x31';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 14;
-$par1['TITLE'] = 'green stroboflash';
-$par1['CODE'] = '0x32';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 15;
-$par1['TITLE'] = 'glue stroboflash';
-$par1['CODE'] = '0x33';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 16;
-$par1['TITLE'] = 'yellow stroboflash';
-$par1['CODE'] = '0x34';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-
-$par1['ID'] = 17;
-$par1['TITLE'] = 'cyan stroboflash';
-$par1['CODE'] = '0x35';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 18;
-$par1['TITLE'] = 'purple stroboflash	0x36';
-$par1['CODE'] = '0x36';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 19;
-$par1['TITLE'] = 'white stroboflash';
-$par1['CODE'] = '0x37';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-
-$par1['ID'] = 20;
-$par1['TITLE'] = '7 colors jump change';
-$par1['CODE'] = '0x38';
-$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
-SQLInsert('magichome_effects',$par1);
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
+	$data = <<<EOD
+	magichome_devices: ID int(10) unsigned NOT NULL auto_increment
+	magichome_devices: TITLE varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: IP varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: PORT varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: MAC varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: ONLINE varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: LASTPING varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: FAVORITCOLOR varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: CURRENTCOLOR varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: FIND varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: MODEL varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: ZONE varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: LINKED_OBJECT varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: LINKED_PROPERTY varchar(100) NOT NULL DEFAULT ''
+	magichome_devices: RGB varchar(100) NOT NULL DEFAULT '' 
+	magichome_devices: RGBCURRENT varchar(100) NOT NULL DEFAULT '' 
+	EOD;
+	parent::dbInstall($data);
+	
+	$data = <<<EOD
+	magichome_commands: ID int(10) unsigned NOT NULL auto_increment
+	magichome_commands: TITLE varchar(100) NOT NULL DEFAULT ''
+	magichome_commands: VALUE varchar(255) NOT NULL DEFAULT ''
+	magichome_commands: DEVICE_ID int(10) NOT NULL DEFAULT '0'
+	magichome_commands: LINKED_OBJECT varchar(100) NOT NULL DEFAULT ''
+	magichome_commands: LINKED_PROPERTY varchar(100) NOT NULL DEFAULT ''
+	magichome_commands: LINKED_METHOD varchar(100) NOT NULL DEFAULT '' 
+	
+	magichome_commands: UPDATED datetime
+	EOD;
+	parent::dbInstall($data);
+	
+	$data = <<<EOD
+	magichome_effects: ID int(10) unsigned NOT NULL auto_increment
+	magichome_effects: TITLE varchar(100) NOT NULL DEFAULT ''
+	magichome_effects: CODE varchar(255) NOT NULL DEFAULT ''
+	magichome_effects: DEVICE_TYPE varchar(100) NOT NULL DEFAULT ''
+	EOD;
+	parent::dbInstall($data);
+	
+	$data = <<<EOD
+	magichome_config: parametr  varchar(300) 
+	magichome_config: value varchar(10000)  
+	EOD;
+	parent::dbInstall($data);
+	
+	//  $mhdevices=SQLSelect("SELECT *  FROM magichome_commands");
+	$mhdevices=SQLSelect("SELECT *  FROM magichome_commands");
+	if (!$mhdevices[0]['ID']){
+		
+		$par=array();		 
+		$par['TITLE'] = 'command';
+		$par['ID'] = "1";		 
+		SQLInsert('magichome_commands', $par);		 
+		
+		$par['TITLE'] = 'color';
+		$par['ID'] = "2";		 
+		SQLInsert('magichome_commands', $par);		 
+							
+		$par['TITLE'] = 'level';
+		$par['ID'] = "3";		 
+		SQLInsert('magichome_commands', $par);		 
+		
+		$par['TITLE'] = 'status';
+		$par['ID'] = "4";		 
+		SQLInsert('magichome_commands', $par);		 
+	}
+
+	$par2=SQLSelectOne("SELECT *  FROM magichome_config where parametr='DEBUG'");
+	if (!$par2['value']) {
+		$par2['parametr'] = 'DEBUG';
+		$par2['value'] = "";		 
+		SQLInsert('magichome_config', $par2);		 
+	}
+	$par2=SQLSelectOne("SELECT *  FROM magichome_config where parametr='EVERY'");
+	if (!$par2['value']) {
+		$par2['parametr'] = 'EVERY';
+		$par2['value'] = "300";		 
+		SQLInsert('magichome_config', $par2);		 
+	}	
+	$par2=SQLSelectOne("SELECT *  FROM magichome_config where parametr='LASTCYCLE_TS'");
+	if (!$par2['value']) {
+		$par2['parametr'] = 'LASTCYCLE_TS';
+		$par2['value'] = "";		 
+		SQLInsert('magichome_config', $par2);		 
+	}
+	$par2=SQLSelectOne("SELECT *  FROM magichome_config where parametr='ENABLE'");
+	if (!$par2['value']) {
+		$par2['parametr'] = 'ENABLE';
+		$par2['value'] = "1";		 
+		SQLInsert('magichome_config', $par2);		 
+	}
+	$par1=SQLSelectOne ("select * from magichome_effects where ID=1");
+	if (!$par1['ID']) {
+		$par1['ID'] = 1;
+		$par1['TITLE'] = '7 colors gradual change';
+		$par1['CODE'] = '0x25';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		$par1['ID'] = 2;
+		$par1['TITLE'] = 'red gradual change';
+		$par1['CODE'] = '0x26';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		$par1['ID'] = 3;
+		$par1['TITLE'] = 'green gradual change';
+		$par1['CODE'] = '0x27';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 4;
+		$par1['TITLE'] = 'glue gradual change';
+		$par1['CODE'] = '0x28';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 5;
+		$par1['TITLE'] = 'yellow gradual change';
+		$par1['CODE'] = '0x29';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 6;
+		$par1['TITLE'] = 'cyan gradual change';
+		$par1['CODE'] = '0x2A';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		
+		$par1['ID'] = 7;
+		$par1['TITLE'] = 'purple gradual change';
+		$par1['CODE'] = '0x2B';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 8;
+		$par1['TITLE'] = 'white gradual change';
+		$par1['CODE'] = '0x2C';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 9;
+		$par1['TITLE'] = 'red and green gradual change';
+		$par1['CODE'] = '0x2D';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 10;
+		$par1['TITLE'] = 'red and blue gradual change';
+		$par1['CODE'] = '0x2E';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		$par1['ID'] = 11;
+		$par1['TITLE'] = 'green and blue gradual change';
+		$par1['CODE'] = '0x2F';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		$par1['ID'] = 12;
+		$par1['TITLE'] = '7 colors stroboflash';
+		$par1['CODE'] = '0x30';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		$par1['ID'] = 13;
+		$par1['TITLE'] = 'red stroboflash';
+		$par1['CODE'] = '0x31';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 14;
+		$par1['TITLE'] = 'green stroboflash';
+		$par1['CODE'] = '0x32';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 15;
+		$par1['TITLE'] = 'glue stroboflash';
+		$par1['CODE'] = '0x33';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 16;
+		$par1['TITLE'] = 'yellow stroboflash';
+		$par1['CODE'] = '0x34';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		
+		$par1['ID'] = 17;
+		$par1['TITLE'] = 'cyan stroboflash';
+		$par1['CODE'] = '0x35';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 18;
+		$par1['TITLE'] = 'purple stroboflash	0x36';
+		$par1['CODE'] = '0x36';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 19;
+		$par1['TITLE'] = 'white stroboflash';
+		$par1['CODE'] = '0x37';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+		
+		
+		$par1['ID'] = 20;
+		$par1['TITLE'] = '7 colors jump change';
+		$par1['CODE'] = '0x38';
+		$par1['DEVICE_TYPE'] = 'AK001-ZJ100';
+		SQLInsert('magichome_effects',$par1);
+	}
+	
  }
 
-function csum($str)
-{
-$ar=str_split ($str,2);
-
-$csum=0;
-for ($j = 0; $j <count ($ar); $j++) {
- $csum=$csum+hexdec($ar[$j]);
- }
-return substr(dechex($csum),-2);
+function csum($str){
+	$ar=str_split ($str,2);
+	$csum=0;
+	for ($j = 0; $j <count ($ar); $j++) {
+		$csum=$csum+hexdec($ar[$j]);
+	}
+	return substr(dechex($csum),-2);
 }
 
 
 function rgb2text($r,$g,$b){
-//определяем, что сейчас за цвет
-//http://www.manhunter.ru/webmaster/1028_opredelenie_osnovnogo_cveta_izobrazheniya_na_php.html
-
-// Перевести RGB в HSV
-$R=($r/255);
-$G=($g/255);
-$B=($b/255);
- 
-$maxRGB=max(array($R, $G, $B));
-$minRGB=min(array($R, $G, $B));
-$delta=$maxRGB-$minRGB;
- 
-// Цветовой тон
-if ($delta!=0) {
-    if ($maxRGB==$R) {
-        $h=(($G-$B)/$delta);
-    }
-    elseif ($maxRGB==$G) {
-        $h=2+($B-$R)/$delta;
-    }
-    elseif ($maxRGB==$B) {
-        $h=4+($R-$G)/$delta;
-    }
-    $hue=round($h*60);
-    if ($hue<0) { $hue+=360; }
-}
-else {
-    $hue=0;
-}
- 
-// Насыщенность
-if ($maxRGB!=0) {
-    $saturation=round($delta/$maxRGB*100);
-}
-else {
-    $saturation=0;
-}
- 
-// Яркость
-$value=round($maxRGB*100);
-
-// Яркость меньше 30%
-if ($value<30) {
-    // Черный
-//    $color='#000000';
-$textcolor='черный';
-}
-// Яркость больше 85% и насыщенность меньше 15%
-elseif ($value>85 && $saturation<15) {
-    // Белый
-//    $color='#FFFFFF';
-$textcolor='белый';
-
-}
-// Насыщенность меньше 25%
-elseif ($saturation<25) {
-    // Серый
-//    $color='#909090';
-$textcolor='серый';
-}
-// Определить цвет по цветовому тону
-else {
-    // Красный
-    if ($hue>320 || $hue<=40) {
-//        $color='#FF0000';
-$textcolor='красный';
-    }
-    // Розовый
-    elseif ($hue>260 && $hue<=320) {
-//        $color='#FF00FF';
-$textcolor='розовый';
-    }
-    // Синий
-    elseif ($hue>190 && $hue<=260) {
-//        $color='#0000FF';
-$textcolor='синий';
-    }
-    // Голубой
-    elseif ($hue>175 && $hue<=190) {
-//        $color='#00FFFF';
-$textcolor='голубой';
-    }
-    // Зеленый
-    elseif ($hue>70 && $hue<=175) {
-//        $color='#00FF00';
-$textcolor='зеленый';
-    }
-    // Желтый
-    else {
-//        $color='#FFFF00';
-$textcolor='желтый';
-    }
-
-}
-return $textcolor;
+	//определяем, что сейчас за цвет
+	//http://www.manhunter.ru/webmaster/1028_opredelenie_osnovnogo_cveta_izobrazheniya_na_php.html
+	
+	// Перевести RGB в HSV
+	$R=($r/255);
+	$G=($g/255);
+	$B=($b/255);
+	
+	$maxRGB=max(array($R, $G, $B));
+	$minRGB=min(array($R, $G, $B));
+	$delta=$maxRGB-$minRGB;
+	
+	// Цветовой тон
+	if ($delta!=0) {
+		if ($maxRGB==$R) {
+			$h=(($G-$B)/$delta);
+		}
+		elseif ($maxRGB==$G) {
+			$h=2+($B-$R)/$delta;
+		}
+		elseif ($maxRGB==$B) {
+			$h=4+($R-$G)/$delta;
+		}
+		$hue=round($h*60);
+		if ($hue<0) { $hue+=360; }
+	}
+	else {
+		$hue=0;
+	}
+	
+	// Насыщенность
+	if ($maxRGB!=0) {
+		$saturation=round($delta/$maxRGB*100);
+	}
+	else {
+		$saturation=0;
+	}
+	
+	// Яркость
+	$value=round($maxRGB*100);
+	
+	// Яркость меньше 30%
+	if ($value<30) {
+		// Черный
+		//    $color='#000000';
+		$textcolor='черный';
+	}
+	// Яркость больше 85% и насыщенность меньше 15%
+	elseif ($value>85 && $saturation<15) {
+		// Белый
+		//    $color='#FFFFFF';
+		$textcolor='белый';
+	}
+	// Насыщенность меньше 25%
+	elseif ($saturation<25) {
+		// Серый
+		//    $color='#909090';
+		$textcolor='серый';
+	}
+	// Определить цвет по цветовому тону
+	else {
+		// Красный
+		if ($hue>320 || $hue<=40) {
+			//        $color='#FF0000';
+			$textcolor='красный';
+		}
+		// Розовый
+		elseif ($hue>260 && $hue<=320) {
+			// $color='#FF00FF';
+			$textcolor='розовый';
+		}
+		// Синий
+		elseif ($hue>190 && $hue<=260) {
+			//   $color='#0000FF';
+			$textcolor='синий';
+		}
+		// Голубой
+		elseif ($hue>175 && $hue<=190) {
+			//        $color='#00FFFF';
+			$textcolor='голубой';
+		}
+		// Зеленый
+		elseif ($hue>70 && $hue<=175) {
+			//        $color='#00FF00';
+			$textcolor='зеленый';
+		}
+		// Желтый
+		else {
+			//        $color='#FFFF00';
+			$textcolor='желтый';
+		}
+	}
+	return $textcolor;
 }
 
 
@@ -1743,112 +1535,111 @@ return $textcolor;
 
 
 function nextcolor($r,$g,$b){
-//определяем, что сейчас за цвет
-//http://www.manhunter.ru/webmaster/1028_opredelenie_osnovnogo_cveta_izobrazheniya_na_php.html
-
-// Перевести RGB в HSV
-$R=($r/255);
-$G=($g/255);
-$B=($b/255);
- 
-$maxRGB=max(array($R, $G, $B));
-$minRGB=min(array($R, $G, $B));
-$delta=$maxRGB-$minRGB;
- 
-// Цветовой тон
-if ($delta!=0) {
-    if ($maxRGB==$R) {
-        $h=(($G-$B)/$delta);
-    }
-    elseif ($maxRGB==$G) {
-        $h=2+($B-$R)/$delta;
-    }
-    elseif ($maxRGB==$B) {
-        $h=4+($R-$G)/$delta;
-    }
-    $hue=round($h*60);
-    if ($hue<0) { $hue+=360; }
-}
-else {
-    $hue=0;
-}
- 
-// Насыщенность
-if ($maxRGB!=0) {
-    $saturation=round($delta/$maxRGB*100);
-}
-else {
-    $saturation=0;
-}
- 
-// Яркость
-$value=round($maxRGB*100);
-
-// Яркость меньше 30%
-if ($value<30) {
-    // Черный
-//    $color='#000000';
-
-$textcolor='черный';
-$ncolor='FFFFFF';
-}
-// Яркость больше 85% и насыщенность меньше 15%
-elseif ($value>85 && $saturation<15) {
-    // Белый
-//    $color='#FFFFFF';
-$textcolor='белый';
-$ncolor='909090';
-
-}
-// Насыщенность меньше 25%
-elseif ($saturation<25) {
-    // Серый
-//    $color='#909090';
-$textcolor='серый';
-$ncolor='FF00FF';
-}
-// Определить цвет по цветовому тону
-else {
-    // Красный
-    if ($hue>320 || $hue<=40) {
-//        $color='#FF0000';
-$textcolor='красный';
-$ncolor='FF00FF';
-    }
-    // Розовый
-    elseif ($hue>260 && $hue<=320) {
-//        $color='#FF00FF';
-$textcolor='розовый';
-$ncolor='0000FF';
-    }
-    // Синий
-    elseif ($hue>190 && $hue<=260) {
-//        $color='#0000FF';
-$textcolor='синий';
-$ncolor='00FFFF';
-    }
-    // Голубой
-    elseif ($hue>175 && $hue<=190) {
-//        $color='#00FFFF';
-$textcolor='голубой';
-$ncolor='00FF00';
-    }
-    // Зеленый
-    elseif ($hue>70 && $hue<=175) {
-//        $color='#00FF00';
-$textcolor='зеленый';
-$ncolor='FFFF00';
-    }
-    // Желтый
-    else {
-//        $color='#FFFF00';
-$textcolor='желтый';
-$ncolor='909090';
-    }
-}
-
-
-return $ncolor;
+	//определяем, что сейчас за цвет
+	//http://www.manhunter.ru/webmaster/1028_opredelenie_osnovnogo_cveta_izobrazheniya_na_php.html
+	
+	// Перевести RGB в HSV
+	$R=($r/255);
+	$G=($g/255);
+	$B=($b/255);
+	
+	$maxRGB=max(array($R, $G, $B));
+	$minRGB=min(array($R, $G, $B));
+	$delta=$maxRGB-$minRGB;
+	
+	// Цветовой тон
+	if ($delta!=0) {
+		if ($maxRGB==$R) {
+			$h=(($G-$B)/$delta);
+		}
+		elseif ($maxRGB==$G) {
+			$h=2+($B-$R)/$delta;
+		}
+		elseif ($maxRGB==$B) {
+			$h=4+($R-$G)/$delta;
+		}
+		$hue=round($h*60);
+		if ($hue<0) { $hue+=360; }
+	}
+	else {
+		$hue=0;
+	}
+	
+	// Насыщенность
+	if ($maxRGB!=0) {
+		$saturation=round($delta/$maxRGB*100);
+	}
+	else {
+		$saturation=0;
+	}
+	
+	// Яркость
+	$value=round($maxRGB*100);
+	
+	// Яркость меньше 30%
+	if ($value<30) {
+		// Черный
+		//    $color='#000000';
+	
+		$textcolor='черный';
+		$ncolor='FFFFFF';
+	}
+	// Яркость больше 85% и насыщенность меньше 15%
+	elseif ($value>85 && $saturation<15) {
+		// Белый
+		//    $color='#FFFFFF';
+		$textcolor='белый';
+		$ncolor='909090';
+	}
+	// Насыщенность меньше 25%
+	elseif ($saturation<25) {
+		// Серый
+		//    $color='#909090';
+		$textcolor='серый';
+		$ncolor='FF00FF';
+	}
+	// Определить цвет по цветовому тону
+	else {
+		// Красный
+		if ($hue>320 || $hue<=40) {
+			//        $color='#FF0000';
+			$textcolor='красный';
+			$ncolor='FF00FF';
+		}
+		// Розовый
+		elseif ($hue>260 && $hue<=320) {
+			//        $color='#FF00FF';
+			$textcolor='розовый';
+			$ncolor='0000FF';
+		}
+		// Синий
+		elseif ($hue>190 && $hue<=260) {
+			//        $color='#0000FF';
+			$textcolor='синий';
+			$ncolor='00FFFF';
+		}
+		// Голубой
+		elseif ($hue>175 && $hue<=190) {
+			//        $color='#00FFFF';
+			$textcolor='голубой';
+			$ncolor='00FF00';
+		}
+		// Зеленый
+		elseif ($hue>70 && $hue<=175) {
+			//        $color='#00FF00';
+			$textcolor='зеленый';
+			$ncolor='FFFF00';
+		}
+		// Желтый
+		else {
+			//        $color='#FFFF00';
+			$textcolor='желтый';
+			$ncolor='909090';
+		}
+	}
+	
+	
+	return $ncolor;
 }
   
 
